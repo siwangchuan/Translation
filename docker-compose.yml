@@ -10,7 +10,7 @@ services:
       - ALIYUN_API_KEY=${ALIYUN_API_KEY}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "python -c 'import sys, urllib.request; sys.exit(0 if urllib.request.urlopen(\"http://localhost:8000/health\", timeout=5).status == 200 else 1)'"]
+      test: ["CMD-SHELL", "python -c 'import sys; import urllib.request; sys.exit(0 if urllib.request.urlopen(\"http://localhost:8000/health\", timeout=5).getcode() == 200 else 1)' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -6,9 +6,12 @@ import os
 app = FastAPI(title="AI Translation Assistant")
 
 # Get allowed origins from environment or use localhost for development
-ALLOWED_ORIGINS = os.getenv(
+allowed_origins_str = os.getenv(
     "ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:8080"
-).split(",")
+)
+ALLOWED_ORIGINS = [
+    origin.strip() for origin in allowed_origins_str.split(",") if origin.strip()
+]
 
 # Configure CORS for frontend
 app.add_middleware(
