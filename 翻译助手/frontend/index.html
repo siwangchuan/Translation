@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 智能翻译助手</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-color: #6c5ce7;
+            --bg-color: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #2d3436;
+            --text-secondary: #636e72;
+            --success-color: #00b894;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            font-weight: 800;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .input-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            padding: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            resize: none;
+            font-size: 16px;
+            line-height: 1.6;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+            outline: none;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -30px;
+            margin-right: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .clear-btn:hover {
+            opacity: 1;
+            color: #d63031;
+        }
+
+        button.primary-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button.primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
+        }
+
+        button.primary-btn:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #b2bec3;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-group {
+            margin-top: 2.5rem;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .translation-container {
+            background-color: #fff;
+            border-radius: 12px;
+            border: 1px solid #dfe6e9;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .translation-box {
+            padding: 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            min-height: 60px;
+        }
+
+        .translation-actions {
+            background-color: #f8f9fa;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid #eee;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: #dfe6e9;
+            color: var(--secondary-color);
+        }
+
+        .keywords-section {
+            margin-top: 1.5rem;
+        }
+
+        .keywords-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .keyword-tag {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--secondary-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+        }
+
+        .keyword-tag:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .loading {
+            text-align: center;
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(108, 92, 231, 0.1);
+            border-top: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: #2d3436;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-language"></i> AI 智能翻译助手</h1>
+        
+        <div class="input-group">
+            <div class="input-header">
+                <label for="inputText"><i class="fas fa-pen"></i> 中文内容</label>
+            </div>
+            <textarea id="inputText" placeholder="请输入您想要翻译的中文文本... （例如：人工智能正在改变世界）"></textarea>
+            <div class="actions">
+                <button class="clear-btn" onclick="clearInput()" title="清空内容">
+                    <i class="fas fa-times-circle"></i> 清空
+                </button>
+            </div>
+        </div>
+
+        <button id="translateBtn" class="primary-btn" onclick="handleTranslate()">
+            <span id="btnText">开始智能翻译</span>
+            <i class="fas fa-magic"></i>
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="color: var(--text-secondary);">AI 正在思考中...</p>
+        </div>
+
+        <div class="result-group" id="resultArea">
+            <div class="input-header">
+                <label><i class="fas fa-check-circle"></i> 英文翻译</label>
+            </div>
+            
+            <div class="translation-container">
+                <div class="translation-box" id="translationOutput"></div>
+                <div class="translation-actions">
+                    <button class="icon-btn" onclick="copyTranslation()">
+                        <i class="far fa-copy"></i> 复制结果
+                    </button>
+                </div>
+            </div>
+            
+            <div class="keywords-section">
+                <label><i class="fas fa-tags"></i> 核心关键词</label>
+                <div class="keywords-container" id="keywordsOutput"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast">
+        <i class="fas fa-check"></i> <span id="toastMsg">操作成功</span>
+    </div>
+
+    <script>
+        // 后端基地址。默认使用当前页面域名；如果通过 file:// 打开页面，则回退到本地开发地址 http://localhost:8000
+        let API_BASE = '';
+        if (location.protocol === 'file:') {
+            API_BASE = 'http://localhost:8000';
+        }
+
+        // 检测后端状态并在页面中友好提示
+        window.addEventListener('load', async () => {
+            try {
+                const res = await fetch((API_BASE || '') + '/docs', { method: 'HEAD' });
+                if (!res.ok) throw new Error('no-docs');
+            } catch (e) {
+                console.log('后端可能未启动');
+                showToast('无法连接到后端。请确保后端已在端口 8000 运行（http://localhost:8000）', 5000);
+            }
+        });
+
+        function clearInput() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('inputText').focus();
+            document.getElementById('resultArea').style.display = 'none';
+        }
+
+        function showToast(msg, duration = 2000) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        function copyTranslation() {
+            const text = document.getElementById('translationOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('已复制到剪贴板');
+            }).catch(err => {
+                showToast('复制失败');
+            });
+        }
+
+        async function handleTranslate() {
+            const inputText = document.getElementById('inputText').value.trim();
+            if (!inputText) {
+                showToast('请先输入需要翻译的内容');
+                document.getElementById('inputText').focus();
+                return;
+            }
+
+            const btn = document.getElementById('translateBtn');
+            const btnText = document.getElementById('btnText');
+            const loading = document.getElementById('loading');
+            const resultArea = document.getElementById('resultArea');
+            const translationOutput = document.getElementById('translationOutput');
+            const keywordsOutput = document.getElementById('keywordsOutput');
+
+            // UI 状态更新
+            btn.disabled = true;
+            btnText.innerText = '翻译中...';
+            loading.style.display = 'block';
+            resultArea.style.display = 'none';
+
+            try {
+                // 设置超时，防止后端挂死
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 60000); // 增加到 60s timeout
+
+                const response = await fetch(`${API_BASE}/translate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: inputText }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    const errorDetail = await response.json().catch(() => ({}));
+                    throw new Error(errorDetail.detail || `HTTP 错误 ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 显示结果
+                translationOutput.innerText = data.translation; // 使用innerText防止XSS
+                
+                // 渲染关键词
+                keywordsOutput.innerHTML = '';
+                if (data.keywords && data.keywords.length > 0) {
+                    data.keywords.forEach(keyword => {
+                        const span = document.createElement('span');
+                        span.className = 'keyword-tag';
+                        span.innerText = keyword; // 使用innerText
+                        keywordsOutput.appendChild(span);
+                    });
+                } else {
+                    keywordsOutput.innerHTML = '<span style="color:#999;font-size:0.9rem;">未提取到关键词</span>';
+                }
+
+                resultArea.style.display = 'block';
+                // 滚动到结果区域
+                setTimeout(() => {
+                    resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+
+            } catch (error) {
+                console.error('Translation error:', error);
+                if (error.name === 'AbortError') {
+                    showToast('请求超时，请检查您的网络或后端连接。', 4000);
+                } else if (error.message && error.message.includes('Failed to fetch')) {
+                    showToast('无法连接到服务器。请确认后端已在端口 8000 运行（http://localhost:8000）', 5000);
+                } else {
+                    showToast(`翻译失败: ${error.message}`, 4000);
+                }
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = '开始智能翻译';
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
