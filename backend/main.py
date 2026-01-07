@@ -3,8 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 
-import os
-
 app = FastAPI(title="AI Translation Assistant")
 
 # Get allowed origins from environment or use localhost for development
