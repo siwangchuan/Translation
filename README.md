@@ -236,7 +236,7 @@ docker run -d \
 
 ```bash
 pip install -r requirements.txt
-pip install pytest pytest-cov flake8 black
+pip install -r requirements-dev.txt
 ```
 
 ### 代码格式化
