@@ -198,11 +198,21 @@
         <div id="status" class="status" style="display: none;"></div>
     </div>
 
+    <!-- Optional configuration file for production deployment -->
+    <script src="config.js" onerror="console.log('No config.js found, using default configuration')"></script>
+    
     <script>
-        // API endpoint - update this based on your deployment
-        const API_URL = window.location.hostname === 'localhost' 
-            ? 'http://localhost:8000'
-            : 'https://your-backend-url.com'; // Update with your actual backend URL
+        // API endpoint configuration
+        // Automatically detects the backend URL based on the environment
+        const API_URL = (() => {
+            // For local development
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                return 'http://localhost:8000';
+            }
+            // For GitHub Pages deployment, use the backend URL from environment or default
+            // You can set this by creating a config.js file or using a build-time replacement
+            return window.BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:8000`;
+        })();
 
         async function translateText() {
             const sourceText = document.getElementById('sourceText').value;

@@ -73,7 +73,16 @@ $env:ALIYUN_API_KEY='your-aliyun-api-key'
 
 ### 访问前端
 
-打开浏览器访问 `frontend/index.html` 或访问 GitHub Pages 部署的地址。
+**本地开发：**
+打开浏览器访问 `frontend/index.html`，前端会自动连接到 `http://localhost:8000`。
+
+**GitHub Pages 部署：**
+前端部署到 GitHub Pages 后，需要配置后端 URL：
+1. 复制 `frontend/config.example.js` 为 `frontend/config.js`
+2. 在 `config.js` 中设置 `window.BACKEND_URL` 为你的后端地址
+3. 提交并推送更改
+
+或访问 GitHub Pages 部署的地址。
 
 ### API 文档
 

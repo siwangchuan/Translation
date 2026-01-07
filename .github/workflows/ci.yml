@@ -46,31 +46,14 @@ jobs:
 
     - name: Check code formatting with black
       run: |
-        black --check backend || true
+        black --check backend
 
     - name: Run tests
       run: |
-        # Create a basic test if none exist
-        if [ ! -d "tests" ]; then
-          mkdir -p tests
-          echo "import pytest" > tests/__init__.py
-          echo "from backend.main import app" > tests/test_main.py
-          echo "from fastapi.testclient import TestClient" >> tests/test_main.py
-          echo "" >> tests/test_main.py
-          echo "client = TestClient(app)" >> tests/test_main.py
-          echo "" >> tests/test_main.py
-          echo "def test_root():" >> tests/test_main.py
-          echo "    response = client.get('/')" >> tests/test_main.py
-          echo "    assert response.status_code == 200" >> tests/test_main.py
-          echo "    assert 'message' in response.json()" >> tests/test_main.py
-          echo "" >> tests/test_main.py
-          echo "def test_health():" >> tests/test_main.py
-          echo "    response = client.get('/health')" >> tests/test_main.py
-          echo "    assert response.status_code == 200" >> tests/test_main.py
-          echo "    assert response.json()['status'] == 'healthy'" >> tests/test_main.py
-          pip install httpx
-        fi
-        pytest tests/ -v || true
+        # Install httpx for testing
+        pip install httpx
+        # Run tests
+        pytest tests/ -v
 
   build-and-push:
     needs: lint-and-test

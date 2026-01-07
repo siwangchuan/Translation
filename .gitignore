@@ -1,3 +1,6 @@
+# Frontend configuration
+frontend/config.js
+
 # Python
 __pycache__/
 *.py[cod]
