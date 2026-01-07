@@ -99,23 +99,19 @@ docker run -d \
   translation-backend
 ```
 
-### 使用 Docker Compose (可选)
+### 使用 Docker Compose
 
-创建 `docker-compose.yml`:
+项目已包含 `docker-compose.yml` 文件：
 
-```yaml
-version: '3.8'
-services:
-  backend:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - ALIYUN_API_KEY=${ALIYUN_API_KEY}
-    restart: unless-stopped
+1. 复制环境变量示例：
+```bash
+cp .env.example .env
 ```
 
-运行：
+2. 编辑 `.env` 文件并设置你的 API Key
+
+3. 启动服务：
+
 ```bash
 docker-compose up -d
 ```
